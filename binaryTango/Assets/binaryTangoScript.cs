@@ -10,7 +10,7 @@ public class binaryTangoScript : ModuleScript {
 
 	const float BASEBG = 0.1254902f;
 
-	private byte yourAnswer = 0;
+	internal byte yourAnswer = 0;
 	public TextMesh yourAnswerUI;
 	public TextMesh[] userAnswerUI;
 	public KMSelectable[] answerKeys;
@@ -18,9 +18,9 @@ public class binaryTangoScript : ModuleScript {
 	private byte[,] numbers = new byte[3, 2];
 	public TextMesh[] numbersUI;
 
-	private byte[] answers = new byte[3];
+	internal byte[] answers = new byte[3];
 
-	private byte stageNumber = 0;
+	internal byte stageNumber = 0;
 
 	public KMSelectable submitPixel;
 	public MeshRenderer[] pixelStrips;
@@ -52,9 +52,13 @@ public class binaryTangoScript : ModuleScript {
     private void ChangeAnswer(int i)
 	{
 		ButtonEffect(answerKeys[i], 0.25f, KMSoundOverride.SoundEffect.ButtonPress);
-		int[] possibilities = new int[] { 100, 10, 1, -100, -10, -1 };
-		yourAnswer = (byte)Mathf.Clamp(yourAnswer + possibilities[i], Byte.MinValue, Byte.MaxValue);
-		yourAnswerUI.text = Convert.ToString(yourAnswer, bases[stageNumber]).ToUpper();
+		if (!IsSolved)
+        {
+			int[] possibilities = new int[] { 100, 10, 1, -100, -10, -1 };
+			yourAnswer = (byte)Mathf.Clamp(yourAnswer + possibilities[i], Byte.MinValue, Byte.MaxValue);
+			yourAnswerUI.text = Convert.ToString(yourAnswer, bases[stageNumber]).ToUpper();
+		}
+
 	}
 	private void WriteNumbers(int stage)
     {
@@ -77,7 +81,7 @@ public class binaryTangoScript : ModuleScript {
 			Log("Stage {0}, in base {1} : {2}({3}|{4}) and {5}({6}|{7}) makes {8}({9}|{10}). User the {11} number for the most significant bit, than switch back and forth.".Form(i+1, bases[i],Convert.ToString(numbers[i, 0],bases[i]), numbers[i, 0], GetBinaryWord(numbers[i, 0]), Convert.ToString(numbers[i, 1], bases[i]), numbers[i, 1], GetBinaryWord(numbers[i, 1]), Convert.ToString(answers[i], bases[i]), answers[i], GetBinaryWord(answers[i]),firstBitChooser[i]?"second":"first" ));
 		}
     }
-	public void CheckAnswer()
+	private void CheckAnswer()
     {
 		ButtonEffect(submitPixel, 1, KMSoundOverride.SoundEffect.ButtonPress);
         if (!IsSolved)
