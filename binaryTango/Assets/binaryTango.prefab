@@ -515,7 +515,6 @@ GameObject:
   - component: {fileID: 114096566509612578}
   - component: {fileID: 114199491295988010}
   - component: {fileID: 114423174412685132}
-  - component: {fileID: 114060401638250224}
   m_Layer: 0
   m_Name: binaryTango
   m_TagString: Untagged
@@ -667,7 +666,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1307882765603554}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.075167, y: 0.01896, z: 0.076057}
+  m_LocalPosition: {x: 0.075167, y: 0.01986, z: 0.076057}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4263643048023552}
@@ -2420,19 +2419,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - GUI/KT 3D Text
---- !u!114 &114060401638250224
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1817481149631308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d091a60338958b48bba96c9b01ae8ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TwitchHelpMessage: 'Use !{0} input # to input a number without submitting, or !{0}
-    submit # (number is optional) if you want to submit your answer.'
 --- !u!114 &114090532351047300
 MonoBehaviour:
   m_ObjectHideFlags: 1

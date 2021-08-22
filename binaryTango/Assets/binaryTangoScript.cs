@@ -78,7 +78,7 @@ public class binaryTangoScript : ModuleScript {
 				answers[i] += (byte)(Byte.Parse(GetBinaryWord(numbers[i,firstBitChooser[i]?1-(bit%2):(bit%2)])[bit].ToString())*Math.Pow(2,7-bit));
 				//Log("Number {0} : bit {1} is {2} gives +{3}".Form(bit%2,bit, GetBinaryWord(numbers[i, bit % 2])[bit],(byte)(GetBinaryWord(numbers[i, bit%2])[bit]*Math.Pow(2,7-bit))));
             }
-			Log("Stage {0}, in base {1} : {2}({3}|{4}) and {5}({6}|{7}) makes {8}({9}|{10}). User the {11} number for the most significant bit, than switch back and forth.".Form(i+1, bases[i],Convert.ToString(numbers[i, 0],bases[i]), numbers[i, 0], GetBinaryWord(numbers[i, 0]), Convert.ToString(numbers[i, 1], bases[i]), numbers[i, 1], GetBinaryWord(numbers[i, 1]), Convert.ToString(answers[i], bases[i]), answers[i], GetBinaryWord(answers[i]),firstBitChooser[i]?"second":"first" ));
+			Log("Stage {0}, in base {1} : {2}({3}|{4}) and {5}({6}|{7}) makes {8}({9}|{10}). Use the {11} number for the most significant bit, then switch back and forth.".Form(i+1, bases[i],Convert.ToString(numbers[i, 0],bases[i]), numbers[i, 0], GetBinaryWord(numbers[i, 0]), Convert.ToString(numbers[i, 1], bases[i]), numbers[i, 1], GetBinaryWord(numbers[i, 1]), Convert.ToString(answers[i], bases[i]), answers[i], GetBinaryWord(answers[i]),firstBitChooser[i]?"second":"first" ));
 		}
     }
 	private void CheckAnswer()
@@ -128,6 +128,67 @@ public class binaryTangoScript : ModuleScript {
 	public string GetBinaryWord(byte decimalWord)
 	{
 		return Convert.ToString(decimalWord, 2).PadLeft(8, '0');
+	}
+
+#pragma warning disable 414
+	private readonly string TwitchHelpMessage = @"Use [!{0} input #] to input a number without submitting, or [!{0} submit #] (number is optional) if you want to submit your answer.";
+#pragma warning restore 414
+
+	private IEnumerator ProcessTwitchCommand(string command)
+	{
+		string[] commandSplit = command.ToLowerInvariant().Split();
+		int value;
+		List<KMSelectable> presses = new List<KMSelectable>();
+
+		if ((commandSplit[0].Equals("input")) || (commandSplit[0].Equals("submit")) && commandSplit.Length == 2)
+		{
+			if (!int.TryParse(commandSplit[1], out value))
+			{
+				yield return "sendtochaterror That's not an integer...";
+				yield break;
+			}
+			int delta = value - yourAnswer;
+			int isNegative = delta < 0 ? 3 : 0;
+			presses = CalculatePresses(delta, isNegative);
+		}
+
+		if ((commandSplit[0].Equals("submit")) && commandSplit.Length <= 2)
+		{
+			presses.Add(submitPixel);
+		}
+		if (presses.Count != 0)
+		{
+			yield return null;
+			yield return presses.ToArray();
+		}
+	}
+
+	private IEnumerator TwitchHandleForcedSolve()
+	{
+		for (int i = stageNumber; i < 3; i++)
+		{
+			List<KMSelectable> presses;
+			int delta = answers[i] - yourAnswer;
+			int isNegative = delta < 0 ? 3 : 0;
+			presses = CalculatePresses(delta, isNegative);
+			presses.Add(submitPixel);
+			presses.ForEach(p => p.OnInteract());
+		}
+		while (!IsSolved)
+			yield return true;
+	}
+	private List<KMSelectable> CalculatePresses(int input, int isNegative)
+	{
+		List<KMSelectable> presses = new List<KMSelectable>();
+		int[] values = { 100, 10, 1 };
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < (System.Math.Abs(input) / values[i]) % 10; j++)
+			{
+				presses.Add(answerKeys[i + isNegative]);
+			}
+		}
+		return presses;
 	}
 
 }
