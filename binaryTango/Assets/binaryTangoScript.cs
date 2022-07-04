@@ -172,7 +172,11 @@ public class binaryTangoScript : ModuleScript {
 			int isNegative = delta < 0 ? 3 : 0;
 			presses = CalculatePresses(delta, isNegative);
 			presses.Add(submitPixel);
-			presses.ForEach(p => p.OnInteract());
+			foreach(KMSelectable p in presses)
+            {
+				p.OnInteract();
+				yield return new WaitForSeconds(.1f);
+            }
 		}
 		while (!IsSolved)
 			yield return true;
